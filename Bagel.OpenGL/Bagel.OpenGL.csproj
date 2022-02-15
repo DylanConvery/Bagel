@@ -18,7 +18,7 @@
     <EmbeddedResource Include="Icon.bmp" />
   </ItemGroup>
   <ItemGroup>
-    <MonoGameContentReference Include="..\Bagel\Content\Content.mgcb" />
+    <MonoGameContentReference Include="..\Bagel.Core\Content\Content.mgcb" />
   </ItemGroup>
   <ItemGroup>
     <TrimmerRootAssembly Include="Microsoft.Xna.Framework.Content.ContentTypeReader" Visible="false" />
@@ -28,6 +28,6 @@
     <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.0.1641" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Bagel\Bagel.csproj" />
+    <ProjectReference Include="..\Bagel.Core\Bagel.Core.csproj" />
   </ItemGroup>
 </Project>

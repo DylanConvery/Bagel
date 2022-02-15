@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.31911.196
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bagel.OpenGL", "Bagel.OpenGL\Bagel.OpenGL.csproj", "{1E4D20CF-3A86-4E67-BC5F-4887B2D7F594}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bagel", "Bagel\Bagel.csproj", "{7C9AA242-2153-4E30-9AC2-2D87B3214357}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bagel.Core", "Bagel.Core\Bagel.Core.csproj", "{7C9AA242-2153-4E30-9AC2-2D87B3214357}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
