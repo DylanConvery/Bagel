@@ -15,7 +15,29 @@ namespace Bagel {
 
         protected override void Initialize() { base.Initialize(); }
 
-        protected override void LoadContent() { m_sprite_batch = new SpriteBatch(GraphicsDevice); }
+        protected override void LoadContent() {
+            m_sprite_batch = new SpriteBatch(GraphicsDevice);
+            testECS();
+        }
+
+        private void testECS() {
+            GameObject game = new GameObject("game");
+            game.AddComponent<SpriteComponent>();
+            Component sprite = new SpriteComponent(game);
+            game.AddComponent(sprite);
+            game.HasComponent<SpriteComponent>();
+            game.RemoveComponent<SpriteComponent>();
+            game.RemoveComponent<SpriteComponent>();
+            game.RemoveComponent<SpriteComponent>();
+            game.HasComponent<SpriteComponent>();
+            game.enabled = false;
+            game.RemoveAllComponents();
+            game.AddComponent<SpriteComponent>();
+            game.layer_index = 5;
+            game.AddComponent(sprite);
+            game.HasComponent<SpriteComponent>();
+            game.RemoveComponent<SpriteComponent>();
+        }
 
         protected override void Update(GameTime game_time) {
             if (Keyboard.GetState().IsKeyDown(Keys.Escape)) {
