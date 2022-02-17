@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Bagel {
     public class ComponentList {
-        public ComponentList(GameObject parent_game_object) {
-            m_parent_game_object = parent_game_object;
+        public ComponentList(GameObject game_object) {
+            m_game_object = game_object;
             m_components = new List<Component>();
         }
 
@@ -14,7 +15,7 @@ namespace Bagel {
         //tries removes component from component list and returns result
         public bool Remove(Component component) => m_components.Remove(component);
 
-        //removes all comon
+        //removes all components
         public void Clear() => m_components.Clear();
 
         public void Update(GameTime game_time) {
@@ -25,10 +26,10 @@ namespace Bagel {
             }
         }
 
-        public void Render() {
+        public void Draw(SpriteBatch sprite_batch) {
             foreach (var component in m_components) {
                 if (component.enabled) {
-                    component.Render();
+                    component.Draw(sprite_batch);
                 }
             }
         }
@@ -50,7 +51,7 @@ namespace Bagel {
         }
 
         public int m_count => m_components.Count;
-        private GameObject m_parent_game_object;
+        private GameObject m_game_object;
         private List<Component> m_components;
     }
 }

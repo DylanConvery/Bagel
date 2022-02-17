@@ -1,11 +1,12 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Bagel {
     public class GameObject {
         public GameObject(string name) {
             this.name = name;
-            layer_index = 0;
+            layer_index = 1;
             m_enabled = true;
             id = _idGenerator++;
             m_components = new ComponentList(this);
@@ -14,26 +15,31 @@ namespace Bagel {
 
         public void Update(GameTime game_time) { m_components.Update(game_time); }
 
-        public void Render() { m_components.Render(); }
+        public void Draw(SpriteBatch sprite_batch) { m_components.Draw(sprite_batch); }
 
         //add existing component
         public T AddComponent<T>(T component) where T : Component {
-            if (component.SetParent(this)) {
-                m_components.Add(component);
-                return component;
-            } else {
-                return null;
-            }
-        }
-
-        //add new component. this ensures components always have a parent game object
-        public T AddComponent<T>() where T : Component {
-            var component = (T)Activator.CreateInstance(typeof(T), this);
-            if (component == null) {
-                return null;
-            }
+            component.game_object = this;
             m_components.Add(component);
             return component;
+        }
+
+        /// <summary>
+        ///     add new component. this ensures components always have a parent game object
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public T AddComponent<T>(params dynamic[] args) where T : Component {
+            try {
+                var component = (T)Activator.CreateInstance(typeof(T), args);
+                component.game_object = this;
+                m_components.Add(component);
+                return component;
+            } catch (MissingMethodException e) {
+                Console.WriteLine("{0}: {1}", e.GetType().Name, e.Message);
+            }
+            return null;
         }
 
         //checks if a certain component exists
@@ -71,18 +77,39 @@ namespace Bagel {
             }
         }
 
+        public Vector2 Position {
+            get => m_transform.Position;
+            set => m_transform.Position = value;
+        }
+
+        public Vector2 Scale {
+            get => m_transform.Scale;
+            set => m_transform.Scale = value;
+        }
+
+        public float Rotation {
+            get => m_transform.Rotation;
+            set => m_transform.Rotation = value;
+        }
+
         //gives each instance of GameObject a unique id
         private static uint _idGenerator;
+
         //will be used for determining when to draw a GameObject 
         public int layer_index { get; set; }
+
         //unique id
         public uint id { get; }
+
         //used as secondary identifier
         public string name { get; set; }
+
         //determines whether the GameObject is enabled
         private bool m_enabled;
+
         //list of components
         private ComponentList m_components;
+
         //used for position rotation and scale of all GameObjects
         private Transform m_transform;
     }

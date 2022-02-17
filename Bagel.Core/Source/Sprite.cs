@@ -2,15 +2,29 @@
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Bagel {
     public class Sprite : Component {
-        public Sprite(GameObject parent_game_object) : base(parent_game_object) { }
-
+        public Sprite(Texture2D texture) { this.m_texture = texture; }
         public override void Update(GameTime game_time) { }
-        public override void Render() { }
+        //add constructor for providing arguments to draw
+        public override void Draw(SpriteBatch sprite_batch) {
+            sprite_batch.Draw(
+                m_texture,
+                game_object.Position,
+                null,
+                Color.Red,
+                game_object.Rotation,
+                Vector2.Zero, 
+                Vector2.One,
+                SpriteEffects.None,
+                game_object.layer_index
+            );
+        }
 
         //is this component enabled
         public override bool enabled { get; set; } = true;
+        private Texture2D m_texture;
     }
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -6,39 +7,30 @@ namespace Bagel {
     public class Bagel : Game {
         private GraphicsDeviceManager m_graphics;
         private SpriteBatch m_sprite_batch;
+        private GameObject cube;
+        private Texture2D texture;
+        private Color[] colorData;
 
         public Bagel() {
             m_graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-            IsMouseVisible = true; 
+            IsMouseVisible = true;
         }
 
-        protected override void Initialize() { base.Initialize(); }
+        protected override void Initialize() {
+            texture = new Texture2D(GraphicsDevice, 100, 100);
+            colorData = new Color[100 * 100];
+            cube = new GameObject("cube");
+            base.Initialize();
+        }
 
         protected override void LoadContent() {
             m_sprite_batch = new SpriteBatch(GraphicsDevice);
-            testECS();
-        }
-
-        private void testECS() {
-            GameObject game = new GameObject("game");
-            game.AddComponent<Sprite>();
-            Component sprite = new Sprite(game);
-            game.AddComponent(sprite);
-            game.HasComponent<Sprite>();
-            game.RemoveComponent<Sprite>();
-            game.RemoveComponent<Sprite>();
-            game.RemoveComponent<Sprite>();
-            game.HasComponent<Sprite>();
-            game.enabled = false;
-            game.RemoveAllComponents();
-            game.AddComponent<Sprite>();
-            game.layer_index = 5;
-            game.AddComponent(sprite);
-            game.HasComponent<Sprite>();
-            game.RemoveComponent<Sprite>();
-            game.enabled = false;
-
+            for (int i = 0; i < colorData.Length; i++) {
+                colorData[i] = Color.Red;
+            }
+            texture.SetData(colorData);
+            cube.AddComponent<Sprite>(texture);
         }
 
         protected override void Update(GameTime game_time) {
@@ -46,11 +38,16 @@ namespace Bagel {
                 Exit();
             }
 
+            cube.Update(game_time);
+            cube.Position += new Vector2(0.2f * (float)game_time.ElapsedGameTime.TotalMilliseconds, 0);
             base.Update(game_time);
         }
 
         protected override void Draw(GameTime game_time) {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.Black);
+            m_sprite_batch.Begin();
+            cube.Draw(m_sprite_batch);
+            m_sprite_batch.End();
             base.Draw(game_time);
         }
     }

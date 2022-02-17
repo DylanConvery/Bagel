@@ -5,16 +5,34 @@ using Microsoft.Xna.Framework;
 
 namespace Bagel {
     //TODO: allow for child child transforms to be added
-    public class Transform {
-        public Transform(GameObject parent_game_object) => m_parent_game_object = parent_game_object;
+    public class Transform : Component {
+        public Transform(GameObject game_object) : base(game_object) { SetScale(Vector2.One); }
+        public void SetPosition(Vector2 position) { m_position = position; }
+        public void SetPosition(float x, float y) { SetPosition(new Vector2(x, y)); }
+        public void SetScale(Vector2 scale) { m_scale = scale; }
+        public void SetScale(float scale) { SetScale(new Vector2(scale)); }
+        public void SetRotation(float rotation) { m_rotation = rotation; }
 
         //2D X Y position
-        private Vector2 m_position;
-        //2D X Y scale
-        private Vector2 m_scale;
-        //2D Z rotation
-        private float m_rotation;
+        public Vector2 Position {
+            get => m_position;
+            set => SetPosition(value);
+        }
 
-        private GameObject m_parent_game_object;
+        //2D X Y scale
+        public Vector2 Scale {
+            get => m_scale;
+            set => SetScale(value);
+        }
+
+        //2D Z rotation
+        public float Rotation {
+            get => m_rotation;
+            set => SetRotation(value);
+        }
+
+        private Vector2 m_position;
+        private Vector2 m_scale;
+        private float m_rotation;
     }
 }
