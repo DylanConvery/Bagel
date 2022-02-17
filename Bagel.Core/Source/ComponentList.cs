@@ -2,8 +2,8 @@
 using Microsoft.Xna.Framework;
 
 namespace Bagel {
-    public class ComponentsList {
-        public ComponentsList(GameObject parent_game_object) {
+    public class ComponentList {
+        public ComponentList(GameObject parent_game_object) {
             m_parent_game_object = parent_game_object;
             m_components = new List<Component>();
         }

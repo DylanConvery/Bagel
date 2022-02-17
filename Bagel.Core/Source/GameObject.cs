@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
 namespace Bagel {
@@ -8,8 +7,9 @@ namespace Bagel {
             this.name = name;
             layer_index = 0;
             m_enabled = true;
-            m_components = new ComponentsList(this);
             id = _idGenerator++;
+            m_components = new ComponentList(this);
+            m_transform = new Transform(this);
         }
 
         public void Update(GameTime game_time) { m_components.Update(game_time); }
@@ -65,13 +65,19 @@ namespace Bagel {
             }
         }
 
+        //gives each instance of GameObject a unique id
         private static uint _idGenerator;
+        //will be used for determining when to draw a GameObject 
         public int layer_index { get; set; }
+        //unique id
         public uint id { get; }
+        //used as secondary identifier
         public string name { get; set; }
+        //determines whether the GameObject is enabled
         private bool m_enabled;
-        private ComponentsList m_components;
-
-        //TODO: transform
+        //list of components
+        private ComponentList m_components;
+        //special component used for position rotation and scale of all GameObjects
+        private Transform m_transform;
     }
 }

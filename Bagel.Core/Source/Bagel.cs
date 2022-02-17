@@ -10,7 +10,7 @@ namespace Bagel {
         public Bagel() {
             m_graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-            IsMouseVisible = true;
+            IsMouseVisible = true; 
         }
 
         protected override void Initialize() { base.Initialize(); }
@@ -22,21 +22,23 @@ namespace Bagel {
 
         private void testECS() {
             GameObject game = new GameObject("game");
-            game.AddComponent<SpriteComponent>();
-            Component sprite = new SpriteComponent(game);
+            game.AddComponent<Sprite>();
+            Component sprite = new Sprite(game);
             game.AddComponent(sprite);
-            game.HasComponent<SpriteComponent>();
-            game.RemoveComponent<SpriteComponent>();
-            game.RemoveComponent<SpriteComponent>();
-            game.RemoveComponent<SpriteComponent>();
-            game.HasComponent<SpriteComponent>();
+            game.HasComponent<Sprite>();
+            game.RemoveComponent<Sprite>();
+            game.RemoveComponent<Sprite>();
+            game.RemoveComponent<Sprite>();
+            game.HasComponent<Sprite>();
             game.enabled = false;
             game.RemoveAllComponents();
-            game.AddComponent<SpriteComponent>();
+            game.AddComponent<Sprite>();
             game.layer_index = 5;
             game.AddComponent(sprite);
-            game.HasComponent<SpriteComponent>();
-            game.RemoveComponent<SpriteComponent>();
+            game.HasComponent<Sprite>();
+            game.RemoveComponent<Sprite>();
+            game.enabled = false;
+
         }
 
         protected override void Update(GameTime game_time) {
@@ -48,7 +50,7 @@ namespace Bagel {
         }
 
         protected override void Draw(GameTime game_time) {
-            GraphicsDevice.Clear(Color.Black);
+            GraphicsDevice.Clear(Color.CornflowerBlue);
             base.Draw(game_time);
         }
     }

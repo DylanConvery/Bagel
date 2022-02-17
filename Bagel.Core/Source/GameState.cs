@@ -9,6 +9,7 @@ namespace Bagel {
         public abstract void LoadContent(ContentManager content_manager);
         public abstract void UnloadContent(ContentManager content_manager);
         public abstract void HandleInput();
+
         public event EventHandler<GameState> OnStateSwitched;
 
         protected void SwitchState(GameState game_state) => OnStateSwitched?.Invoke(this, game_state);
