@@ -15,6 +15,6 @@ namespace Bagel {
         //2D Z rotation
         private float m_rotation;
 
-        private GameObject m_parent_game_object { get; set; } = null;
+        private GameObject m_parent_game_object;
     }
 }

@@ -18,14 +18,20 @@ namespace Bagel {
 
         //add existing component
         public T AddComponent<T>(T component) where T : Component {
-            component.parent_game_object = this;
-            m_components.Add(component);
-            return component;
+            if (component.SetParent(this)) {
+                m_components.Add(component);
+                return component;
+            } else {
+                return null;
+            }
         }
 
         //add new component. this ensures components always have a parent game object
         public T AddComponent<T>() where T : Component {
             var component = (T)Activator.CreateInstance(typeof(T), this);
+            if (component == null) {
+                return null;
+            }
             m_components.Add(component);
             return component;
         }
@@ -77,7 +83,7 @@ namespace Bagel {
         private bool m_enabled;
         //list of components
         private ComponentList m_components;
-        //special component used for position rotation and scale of all GameObjects
+        //used for position rotation and scale of all GameObjects
         private Transform m_transform;
     }
 }
