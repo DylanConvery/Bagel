@@ -9,32 +9,27 @@ namespace Bagel {
             layer_index = 1;
             m_enabled = true;
             id = _idGenerator++;
-            m_components = new ComponentList(this);
+            m_component_manager = new ComponentManager(this);
             m_transform = new Transform(this);
         }
 
-        public void Update(GameTime game_time) { m_components.Update(game_time); }
+        public void Update(GameTime game_time) { m_component_manager.Update(game_time); }
 
-        public void Draw(SpriteBatch sprite_batch) { m_components.Draw(sprite_batch); }
+        public void Draw(SpriteBatch sprite_batch) { m_component_manager.Draw(sprite_batch); }
 
         //add existing component
         public T AddComponent<T>(T component) where T : Component {
             component.game_object = this;
-            m_components.Add(component);
+            m_component_manager.Add(component);
             return component;
         }
 
-        /// <summary>
-        ///     add new component. this ensures components always have a parent game object
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="args"></param>
-        /// <returns></returns>
+        //add new component. this ensures components always have a parent game object
         public T AddComponent<T>(params dynamic[] args) where T : Component {
             try {
                 var component = (T)Activator.CreateInstance(typeof(T), args);
                 component.game_object = this;
-                m_components.Add(component);
+                m_component_manager.Add(component);
                 return component;
             } catch (MissingMethodException e) {
                 Console.WriteLine("{0}: {1}", e.GetType().Name, e.Message);
@@ -43,10 +38,10 @@ namespace Bagel {
         }
 
         //checks if a certain component exists
-        public bool HasComponent<T>() where T : Component => m_components.GetComponent<T>() != null;
+        public bool HasComponent<T>() where T : Component => m_component_manager.GetComponent<T>() != null;
 
         //returns true if component is removed else false
-        public bool RemoveComponent(Component component) => m_components.Remove(component);
+        public bool RemoveComponent(Component component) => m_component_manager.Remove(component);
 
         //checks if a component exists on our game object and removes it if so
         public bool RemoveComponent<T>() where T : Component {
@@ -59,10 +54,10 @@ namespace Bagel {
         }
 
         //returns a component if it exists or null
-        public T GetComponent<T>() where T : Component => m_components.GetComponent<T>();
+        public T GetComponent<T>() where T : Component => m_component_manager.GetComponent<T>();
 
         //removes all components
-        public void RemoveAllComponents() { m_components.Clear(); }
+        public void RemoveAllComponents() { m_component_manager.Clear(); }
 
         //game object and all components are set to value
         public bool enabled {
@@ -73,7 +68,7 @@ namespace Bagel {
                 }
 
                 m_enabled = value;
-                m_components.Enabled(value);
+                m_component_manager.Enabled(value);
             }
         }
 
@@ -108,7 +103,7 @@ namespace Bagel {
         private bool m_enabled;
 
         //list of components
-        private ComponentList m_components;
+        private ComponentManager m_component_manager;
 
         //used for position rotation and scale of all GameObjects
         private Transform m_transform;

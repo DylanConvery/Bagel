@@ -3,8 +3,8 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Bagel {
-    public class ComponentList {
-        public ComponentList(GameObject game_object) {
+    public class ComponentManager {
+        public ComponentManager(GameObject game_object) {
             m_game_object = game_object;
             m_components = new List<Component>();
         }
