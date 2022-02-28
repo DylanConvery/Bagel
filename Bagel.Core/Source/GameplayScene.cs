@@ -10,6 +10,7 @@ namespace Bagel.Core.Source
 {
     class GameplayScene : Scene
     {
+
         public override void Start() {
             
         }

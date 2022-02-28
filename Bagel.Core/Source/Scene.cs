@@ -6,16 +6,24 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Bagel {
-    public abstract class Scene {
+namespace Bagel
+{
+    public abstract class Scene
+    {
         public virtual void Start() { }
 
-        public virtual void Update(GameTime game_time) {}
+        public virtual void Update(GameTime game_time)
+        {
+            m_game_object_manager.Update(game_time);
+        }
 
-        public void Draw(SpriteBatch sprite_batch) {}
+        public virtual void Draw(SpriteBatch sprite_batch)
+        {
+            m_game_object_manager.Draw(sprite_batch);
+        }
 
         public void Destroy() { }
 
-        private GameObjectManager game_object_manager;
+        protected GameObjectManager m_game_object_manager;
     }
 }
