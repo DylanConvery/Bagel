@@ -10,20 +10,30 @@ namespace Bagel
 {
     public abstract class Scene
     {
+        protected Scene(ContentManager content_manager)
+        {
+            this.content_manager = content_manager;
+            gameObjectManager = new GameObjectManager(this);
+        }
+
         public virtual void Start() { }
 
         public virtual void Update(GameTime game_time)
         {
-            m_game_object_manager.Update(game_time);
+            gameObjectManager.Update(game_time);
         }
 
         public virtual void Draw(SpriteBatch sprite_batch)
         {
-            m_game_object_manager.Draw(sprite_batch);
+            gameObjectManager.Draw(sprite_batch);
         }
 
-        public void Destroy() { }
+        public virtual void Destroy()
+        {
+            gameObjectManager.Clear();
+        }
 
-        protected GameObjectManager m_game_object_manager;
+        protected ContentManager content_manager;
+        protected GameObjectManager gameObjectManager;
     }
 }

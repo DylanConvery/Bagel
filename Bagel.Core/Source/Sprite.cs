@@ -8,13 +8,13 @@ namespace Bagel {
     public class Sprite : Component {
         public Sprite(Texture2D texture) { this.m_texture = texture; }
         public override void Update(GameTime game_time) { }
-        //add constructor for providing arguments to draw
+
         public override void Draw(SpriteBatch sprite_batch) {
             sprite_batch.Draw(
                 m_texture,
                 game_object.Position,
                 null,
-                Color.Red,
+                Color.White,
                 game_object.Rotation,
                 Vector2.Zero, 
                 Vector2.One,

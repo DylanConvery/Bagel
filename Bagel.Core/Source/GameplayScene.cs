@@ -8,15 +8,24 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Bagel.Core.Source
 {
-    class GameplayScene : Scene
+    public class GameplayScene : Scene
     {
+        public GameplayScene(ContentManager content_manager) : base(content_manager) { }
 
-        public override void Start() {
-            
+        GameObject player;
+        Texture2D player_texture;
+
+        public override void Start()
+        {
+            player_texture = content_manager.Load<Texture2D>("bagel");
+            player = gameObjectManager.Add("player");
+            player.AddComponent<Sprite>(player_texture);
         }
 
-        public override void Update(GameTime game_time) {
-
+        public override void Update(GameTime game_time)
+        {
+            player.Position += new Vector2(0.2f * (float)game_time.ElapsedGameTime.TotalMilliseconds, 0);
+            base.Update(game_time);
         }
     }
 }

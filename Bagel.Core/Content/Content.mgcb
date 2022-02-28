@@ -13,3 +13,15 @@
 
 #---------------------------------- Content ---------------------------------#
 
+#begin 687474703a2f2f706978656c6172746d616b65722d646174612d37383734363239313139332e6e7963332e6469676974616c6f6365616e7370616365732e636f6d2f696d6167652f3131353936636664666636363961332e706e67.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:687474703a2f2f706978656c6172746d616b65722d646174612d37383734363239313139332e6e7963332e6469676974616c6f6365616e7370616365732e636f6d2f696d6167652f3131353936636664666636363961332e706e67.png;bagel.png
+

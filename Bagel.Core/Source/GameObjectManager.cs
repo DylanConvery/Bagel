@@ -9,6 +9,11 @@ namespace Bagel
 {
     public class GameObjectManager
     {
+        public GameObjectManager(Scene scene)
+        {
+            m_game_objects = new List<GameObject>();
+            this.m_scene = scene;
+        }
 
         public GameObject Add(string name)
         {
@@ -17,15 +22,50 @@ namespace Bagel
             return game_object;
         }
 
-        public void Remove(string name) { }
+        public bool Remove(string name)
+        {
+            return m_game_objects.Remove(Get(name));
+        }
 
-        public void Remove(int id) { }
+        public bool Remove(int id)
+        {
+            return m_game_objects.Remove(Get(id));
+        }
 
-        public void Remove(GameObject game_object) { }
+        public bool Remove(GameObject game_object) => m_game_objects.Remove(game_object);
 
-        public GameObject Get(string name) { return null; }
+        public void Clear()
+        {
+            foreach (GameObject game_object in m_game_objects)
+            {
+                game_object.RemoveAllComponents();
+            }
+            m_game_objects.Clear();
+        }
 
-        public GameObject Get(int id) { return null; }
+        public GameObject Get(string name)
+        {
+            foreach (GameObject game_object in m_game_objects)
+            {
+                if (game_object.name == name)
+                {
+                    return game_object;
+                }
+            }
+            return null;
+        }
+
+        public GameObject Get(int id)
+        {
+            foreach (GameObject game_object in m_game_objects)
+            {
+                if (game_object.id == id)
+                {
+                    return game_object;
+                }
+            }
+            return null;
+        }
 
         public void Update(GameTime game_time)
         {
@@ -43,8 +83,8 @@ namespace Bagel
             }
         }
 
-        private int m_count => m_game_objects.Count;
         private Scene m_scene;
+        public int m_count => m_game_objects.Count;
         private List<GameObject> m_game_objects;
     }
 }

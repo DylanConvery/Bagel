@@ -24,7 +24,10 @@ namespace Bagel {
         }
 
         protected override void Initialize() {
-            m_scene = new GameplayScene();
+            m_graphics.PreferredBackBufferWidth = m_desired_width / 2;
+            m_graphics.PreferredBackBufferHeight = m_desired_height / 2;
+            m_graphics.ApplyChanges();
+            m_scene = new GameplayScene(Content);
             m_render_target = new RenderTarget2D(
                 GraphicsDevice,
                 m_desired_width,
@@ -36,7 +39,6 @@ namespace Bagel {
                 RenderTargetUsage.DiscardContents
             );
             m_render_scale_rectangle = GetScaleRectangle();
-
             base.Initialize();
         }
 
@@ -53,7 +55,6 @@ namespace Bagel {
                 var bar_width = (Window.ClientBounds.Width - present_width) / 2;
                 scale_rectangle = new Rectangle(bar_width, 0, present_width, Window.ClientBounds.Height);
             }
-
             return scale_rectangle;
         }
 
