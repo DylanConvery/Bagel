@@ -6,6 +6,6 @@ namespace EntityComponentSystem
 {
     public abstract class IComponent
     {
-        protected uint entity_id;
+        public uint entity_id;
     }
 }

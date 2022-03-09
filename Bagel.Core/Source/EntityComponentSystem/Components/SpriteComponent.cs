@@ -5,7 +5,7 @@ using System.Text;
 
 namespace EntityComponentSystem
 {
-    public class SpriteComponent : IComponent
+    public class SpriteComponent
     {
         public Texture2D texture;
 
