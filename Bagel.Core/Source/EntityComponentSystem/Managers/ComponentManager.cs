@@ -1,44 +1,43 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace EntityComponentSystem
 {
-    public class ComponentType
+    public interface IComponentManager { }
+    public class ComponentManager<T> : IComponentManager where T : IComponent
     {
-
-    }
-
-    public class ComponentInstance
-    {
-        public int index;
-    }
-
-    public class ComponentData
-    {
-        public int size = 1;
-        public List<ComponentType> data = new List<ComponentType>(1024);
-    }
-
-    public class ComponentManager<ComponentType>
-    {
-        ComponentInstance AddComponent(Entity entity, ComponentType component)
+        public ComponentInstance AddComponent(Entity entity, T component)
         {
-            ComponentInstance componentInstance = new ComponentInstance();
-            componentInstance.index = component_data.size;
-            component_data.data.Add(component);
+            ComponentInstance component_instance;
+            component_instance.index = component_data.size;
+            component_data.data.Insert(component_instance.index, component);
+
+            entity_map.Add(entity, component_instance);
+
+            component_data.size++;
+            return component_instance;
         }
 
-        void RemoveComponent<T>(Entity entity)
+        public IComponent GetComponent(Entity entity)
         {
+            ComponentInstance component_instance = entity_map.GetComponent(entity);
+            return component_data.data[component_instance.index];
+        }
+
+        public void RemoveComponent(Entity entity)
+        {
+            ComponentInstance component_instance = entity_map.GetComponent(entity);
+            ComponentInstance last_component;
+            last_component.index = component_data.size - 1;
+
+            component_data.data[component_instance.index] = component_data.data[last_component.index];
+            Entity last_entity = entity_map.GetEntity(last_component);
+
             entity_map.Remove(entity);
-        }
-
-        ComponentType GetComponent(Entity entity)
-        {
-            return entity_map[entity];
+            entity_map.Update(last_entity, last_component);
+            component_data.size--;
         }
 
         ComponentData component_data = new ComponentData();
-        protected SortedDictionary<Entity, ComponentInstance> entity_map = new SortedDictionary<Entity, ComponentInstance>();
+        EntityMap entity_map = new EntityMap();
     }
 }

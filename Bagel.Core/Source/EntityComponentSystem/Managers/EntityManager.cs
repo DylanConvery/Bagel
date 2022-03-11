@@ -11,17 +11,18 @@ namespace EntityComponentSystem
         public Entity CreateEntity()
         {
             Entity entity = new Entity();
-            entity.id = _entity_count++;
+            entity.id = entity_count++;
             entities.Add(entity);
             return entity;
         }
 
-        void RemoveEntity(Entity entity)
+        public void RemoveEntity(Entity entity)
         {
             entities.Remove(entity);
+            entity_count--;
         }
 
-        ArrayList entities = new ArrayList();
-        private uint _entity_count;
+        List<Entity> entities = new List<Entity>();
+        private uint entity_count;
     }
 }

@@ -10,10 +10,10 @@ namespace EntityComponentSystem
             //entites with transform component and input component
             foreach (Entity entity in entities)
             {
-                TransformComponent transform = entity.GetComponent<TransformComponent>();
+               // TransformComponent transform = entity.GetComponent<TransformComponent>();
                 
                 //multiply by some velocity
-                transform.position = new Vector2(0.2f * (float)game_time.ElapsedGameTime.TotalMilliseconds, 0);
+                //transform.position = new Vector2(0.2f * (float)game_time.ElapsedGameTime.TotalMilliseconds, 0);
             }
         }
     }

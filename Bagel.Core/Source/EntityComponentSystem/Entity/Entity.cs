@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Bagel.Core.Source.EntityComponentSystem
+namespace EntityComponentSystem
 {
-    internal class World
+    public class Entity
     {
+        public uint id;
     }
 }
