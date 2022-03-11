@@ -23,6 +23,13 @@ namespace EntityComponentSystem
             return component_data.data[component_instance.index];
         }
 
+        public ComponentHandle<T> GetComponentHandle(Entity entity)
+        {
+            ComponentInstance component = entity_map.GetComponent(entity);
+            return new ComponentHandle<T>(entity, this);
+
+        }
+
         public void RemoveComponent(Entity entity)
         {
             ComponentInstance component_instance = entity_map.GetComponent(entity);

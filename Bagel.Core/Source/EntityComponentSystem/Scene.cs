@@ -7,6 +7,14 @@ namespace EntityComponentSystem
 {
     public class Scene
     {
+        public void Initialize()
+        {
+            foreach (System system in systems)
+            {
+                system.Initialize();
+            }
+        }
+
         public Scene(EntityManager entity_manager)
         {
             this.entity_manager = entity_manager;
@@ -26,6 +34,11 @@ namespace EntityComponentSystem
             {
                 system.Draw();
             }
+        }
+
+        void AddComponentManager<T>(ComponentManager<T> component_manager) where T : IComponent
+        {
+
         }
 
         public EntityHandle CreateEntity()
@@ -52,9 +65,9 @@ namespace EntityComponentSystem
             systems.Add(system);
         }
 
-        public void AddComponent<T>(Entity entity, T component) where T : IComponent
+        public void AddComponent(Entity entity, IComponent component)
         {
-            ComponentManager<T> component_manager = GetComponentManager<T>();
+            ComponentManager<IComponent> component_manager = GetComponentManager<IComponent>();
             component_manager.AddComponent(entity, component);
         }
 
@@ -64,8 +77,26 @@ namespace EntityComponentSystem
             component_manager.RemoveComponent(entity);
         }
 
+        public void Unpack<T>(Entity entity, ComponentHandle<T> component_handle) where T : IComponent
+        {
+            var manager = GetComponentManager<T>();
+            component_handle = new ComponentHandle<T>(entity, manager);
+            //ComponentManager<T> componentManager = component_managers[GetCom]
+        }
+
         private ComponentManager<T> GetComponentManager<T>() where T : IComponent
         {
+            int family = Component<T>.family;
+            if (component_managers.Count > family)
+            {
+                return (ComponentManager<T>)component_managers[family];
+                component_managers.
+            }
+            else
+            {
+                component_managers.Add();
+            }
+
             ComponentManager<T> component_manager = new ComponentManager<T>();
             component_managers.Add(component_manager);
             return component_manager;

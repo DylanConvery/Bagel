@@ -4,8 +4,20 @@ using System.Text;
 
 namespace EntityComponentSystem
 {
-    public abstract class IComponent
+    public interface IComponent{ }
+
+    public struct ComponentFamily
     {
-        public uint entity_id;
+        public static int counter = 0;
+    }
+
+    public class Component<T> : IComponent
+    {
+        public static int GetComponentFamily<T>()
+        {
+            return family;
+        }
+
+        public static int family = ComponentFamily.counter++;
     }
 }

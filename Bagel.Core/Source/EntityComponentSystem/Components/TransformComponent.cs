@@ -5,7 +5,7 @@ using System.Text;
 
 namespace EntityComponentSystem
 {
-    public class TransformComponent : IComponent
+    public class TransformComponent : Component<TransformComponent>
     {
         public Vector2 position;
         public float rotation;
