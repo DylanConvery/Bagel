@@ -13,11 +13,6 @@ namespace EntityComponentSystem
 
     public class Component<T> : IComponent
     {
-        public static int GetComponentFamily<T>()
-        {
-            return family;
-        }
-
         public static int family = ComponentFamily.counter++;
     }
 }

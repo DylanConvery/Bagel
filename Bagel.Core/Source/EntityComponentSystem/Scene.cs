@@ -86,20 +86,21 @@ namespace EntityComponentSystem
 
         private ComponentManager<T> GetComponentManager<T>() where T : IComponent
         {
-            int family = Component<T>.family;
-            if (component_managers.Count > family)
-            {
-                return (ComponentManager<T>)component_managers[family];
-                component_managers.
-            }
-            else
-            {
-                component_managers.Add();
-            }
+            //int family = Component<T>.family;
+            //if (component_managers.Count > family)
+            //{
+            //    return (ComponentManager<T>)component_managers[family];
+            //    component_managers.
+            //}
+            //else
+            //{
+            //    component_managers.Add();
+            //}
 
-            ComponentManager<T> component_manager = new ComponentManager<T>();
-            component_managers.Add(component_manager);
-            return component_manager;
+            //ComponentManager<T> component_manager = new ComponentManager<T>();
+            //component_managers.Add(component_manager);
+            //return component_manager;
+            return null;
         }
 
         private EntityManager entity_manager;
