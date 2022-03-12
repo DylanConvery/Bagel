@@ -10,16 +10,25 @@ namespace Bagel {
         private GraphicsDeviceManager m_graphics;
         private SpriteBatch m_sprite_batch;
         private World m_world;
-        private ISystem<SpriteBatch> _drawSystem;
+        private ISystem<SpriteBatch> m_drawSystem;
 
         public Bagel() {
             m_graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
+
+            //removes fixed timestep
+            m_graphics.SynchronizeWithVerticalRetrace = false;
             IsFixedTimeStep = false;
+
+            m_graphics.GraphicsProfile = GraphicsProfile.HiDef;
+            m_graphics.ApplyChanges();
         }
 
         protected   override void Initialize() {
+            m_world = new World();
+
+
             base.Initialize();
         }
 
