@@ -9,7 +9,7 @@ namespace Components
     public struct SpriteComponent
     {
         public Texture2D texture;
-        public float layer_index;
+        public float layerIndex;
         public Color color;
     }
 }

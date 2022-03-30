@@ -8,98 +8,102 @@ using System.IO;
 using Components;
 using Systems;
 using DefaultEcs.Threading;
+using System.Diagnostics;
 
 namespace Bagel
 {
     public class Bagel : Game
     {
-        private GraphicsDeviceManager m_graphics;
-        private SpriteBatch m_sprite_batch;
+        private GraphicsDeviceManager graphicsDevice;
+        private SpriteBatch spriteBatch;
 
-        private World m_world;
-        private ISystem<float> m_update_system;
-        private ISystem<float> m_render_system;
+        private World world;
+        private ISystem<float> updateSystem;
+        private ISystem<float> renderSystem;
 
-        private Texture2D m_player_texture;
-        private Texture2D m_building_texture;
-        private Entity m_player;
-        private Entity m_building;
-        private Entity m_npc;
+        private Texture2D playerTexture;
+        private Texture2D buildingTexture;
+        private Entity player;
+        private Entity building;
+        private Entity npc;
 
         public Bagel()
         {
             #region MonoGame
-            m_graphics = new GraphicsDeviceManager(this);
-            m_graphics.SynchronizeWithVerticalRetrace = false;
+            graphicsDevice = new GraphicsDeviceManager(this);
+            graphicsDevice.SynchronizeWithVerticalRetrace = false;
             IsFixedTimeStep = false;
-            m_graphics.PreferredBackBufferWidth = 800;
-            m_graphics.PreferredBackBufferHeight = 600;
-            m_graphics.GraphicsProfile = GraphicsProfile.HiDef;
+            graphicsDevice.PreferredBackBufferWidth = 800;
+            graphicsDevice.PreferredBackBufferHeight = 600;
+            graphicsDevice.GraphicsProfile = GraphicsProfile.HiDef;
             Content.RootDirectory = "Content";
-            m_graphics.ApplyChanges();
-            m_sprite_batch = new SpriteBatch(GraphicsDevice);
+            graphicsDevice.ApplyChanges();
+            spriteBatch = new SpriteBatch(GraphicsDevice);
             #endregion 
 
-            m_player_texture = Content.Load<Texture2D>("bagel");
-            m_building_texture = Content.Load<Texture2D>("building");
+            playerTexture = Content.Load<Texture2D>("bagel");
+            buildingTexture = Content.Load<Texture2D>("building");
 
-            m_world = new World();
+            world = new World();
 
-            m_update_system = new SequentialSystem<float>(
-                new PlayerInputSystem(m_world)
+            updateSystem = new SequentialSystem<float>(
+                new PlayerInputSystem(world),
+                new PlayerMovementSystem(world)
             );
 
-            m_render_system = new SequentialSystem<float>(
-                new DrawSystem(m_sprite_batch, m_world)
+            renderSystem = new SequentialSystem<float>(
+                new DrawSystem(spriteBatch, world)
             );
 
             #region player
-            m_player = m_world.CreateEntity();
-            m_player.Set(new PlayerComponent
+            player = world.CreateEntity();
+            player.Set<PlayerInputComponent>();
+            player.Set<RigidbodyComponent>();
+            player.Set(new PlayerMovementComponent
             {
-                speed = 4
+                speed = 2000.0f
             });
-            m_player.Set(new SpriteComponent
+            player.Set(new SpriteComponent
             {
-                texture = m_player_texture,
-                layer_index = 0.0f,
+                texture = playerTexture,
+                layerIndex = 0.0f,
                 color = Color.White
             });
-            m_player.Set(new TransformComponent
+            player.Set(new TransformComponent
             {
-                position = new Vector2(50,400),
+                position = new Vector2(50, 400),
                 rotation = 0,
                 scale = new Vector2(0.15f)
             });
             #endregion
 
             #region npc
-            m_npc = m_world.CreateEntity();
-            m_npc.Set<AIComponent>();
-            m_npc.Set(new SpriteComponent
+            npc = world.CreateEntity();
+            npc.Set<AIComponent>();
+            npc.Set(new SpriteComponent
             {
-                texture = m_player_texture,
-                layer_index = 0.0f,
+                texture = playerTexture,
+                layerIndex = 0.0f,
                 color = Color.White
             });
-            m_npc.Set(new TransformComponent
+            npc.Set(new TransformComponent
             {
-                position = new Vector2(100,200),
+                position = new Vector2(100, 200),
                 rotation = 0,
                 scale = new Vector2(0.1f)
             });
             #endregion
 
             #region building
-            m_building = m_world.CreateEntity();
-            m_building.Set(new SpriteComponent
+            building = world.CreateEntity();
+            building.Set(new SpriteComponent
             {
-                texture = m_building_texture,
-                layer_index = 1.0f,
+                texture = buildingTexture,
+                layerIndex = 1.0f,
                 color = Color.White
 
             });
-            m_building.Set(new TransformComponent
+            building.Set(new TransformComponent
             {
                 position = Vector2.Zero,
                 rotation = 0,
@@ -111,13 +115,13 @@ namespace Bagel
 
         protected override void Update(GameTime game_time)
         {
-            m_update_system.Update((float)game_time.ElapsedGameTime.TotalSeconds);
+            updateSystem.Update((float)game_time.ElapsedGameTime.TotalSeconds);
         }
 
         protected override void Draw(GameTime game_time)
         {
             GraphicsDevice.Clear(Color.Black);
-            m_render_system.Update((float)game_time.ElapsedGameTime.TotalSeconds);
+            renderSystem.Update((float)game_time.ElapsedGameTime.TotalSeconds);
         }
     }
 }

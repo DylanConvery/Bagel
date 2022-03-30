@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Components
 {
-    public struct PlayerComponent
+    public struct PlayerMovementComponent
     {
         public float speed;
     }
