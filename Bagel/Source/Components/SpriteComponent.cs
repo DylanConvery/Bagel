@@ -11,5 +11,7 @@ namespace Components
         public Texture2D texture;
         public float layerIndex;
         public Color color;
+        public Vector2 origin;
+        public Vector2 scale;
     }
 }

@@ -16,11 +16,11 @@ namespace Systems
 
             if (keyboard.IsKeyDown(Keys.W))
             {
-                component.vertical = 1005f;
+                component.vertical = -1005f;
             }
             else if (keyboard.IsKeyDown(Keys.S))
             {
-                component.vertical = -1005f;
+                component.vertical = 1005f;
             }
             else if (keyboard.IsKeyDown(Keys.D))
             {

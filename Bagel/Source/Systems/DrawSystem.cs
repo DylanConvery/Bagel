@@ -10,11 +10,13 @@ using System.Text;
 
 namespace Systems
 {
+    [With(typeof(TransformComponent))]
+    [With(typeof(SpriteComponent))]
     class DrawSystem : AEntitySetSystem<float>
     {
         private SpriteBatch spriteBatch;
 
-        public DrawSystem(SpriteBatch spriteBatch, World world) : base(world.GetEntities().With<TransformComponent>().With<SpriteComponent>().AsSet())
+        public DrawSystem(SpriteBatch spriteBatch, World world) : base(world)
         {
             this.spriteBatch = spriteBatch;
         }
@@ -26,16 +28,16 @@ namespace Systems
             foreach (ref readonly Entity entity in entities)
             {
                 ref var sprite_component = ref entity.Get<SpriteComponent>();
-                ref var transform_component = ref entity.Get<TransformComponent>();
+                ref var transform = ref entity.Get<TransformComponent>();
 
                 spriteBatch.Draw(
                     sprite_component.texture,
-                    transform_component.position,
+                    transform.body.Position,
                     null,
                     sprite_component.color,
-                    transform_component.rotation,
-                    new Vector2(0, 0),
-                    transform_component.scale,
+                    transform.body.Rotation,
+                    sprite_component.origin,
+                    sprite_component.scale,
                     SpriteEffects.None,
                     sprite_component.layerIndex
                 );

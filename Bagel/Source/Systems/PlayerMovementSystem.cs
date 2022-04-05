@@ -11,7 +11,6 @@ namespace Systems
     [With(typeof(TransformComponent))]
     [With(typeof(PlayerMovementComponent))]
     [With(typeof(PlayerInputComponent))]
-    [With(typeof(RigidbodyComponent))]
     public class PlayerMovementSystem : AEntitySetSystem<float>
     {
         public PlayerMovementSystem(World world) : base(world) { }
@@ -19,15 +18,15 @@ namespace Systems
         {
             ref var transform = ref entity.Get<TransformComponent>();
             ref var playerMovement = ref entity.Get<PlayerMovementComponent>();
-            ref var rigidbody = ref entity.Get<RigidbodyComponent>();
             ref var playerInput = ref entity.Get<PlayerInputComponent>();
 
-            rigidbody.velocity.X = Approach(playerInput.horizontal, rigidbody.velocity.X, deltaTime * playerMovement.speed);
-            rigidbody.velocity.Y = Approach(playerInput.vertical, rigidbody.velocity.Y, deltaTime * playerMovement.speed);
+            Vector2 velocity = Vector2.Zero;
 
-            transform.position += rigidbody.velocity * deltaTime;
+            velocity.X = Approach(playerInput.horizontal, velocity.X, deltaTime * playerMovement.speed);
+            velocity.Y = Approach(playerInput.vertical, velocity.Y, deltaTime * playerMovement.speed);
 
-            //Debug.WriteLine(rigidbody.velocity);
+            transform.body.ApplyLinearImpulse(velocity);
+            Debug.WriteLine(transform.body.Position);
         }
 
         float Approach(float flGoal, float flCurrent, float dt)
