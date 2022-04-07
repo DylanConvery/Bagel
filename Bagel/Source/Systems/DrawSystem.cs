@@ -21,7 +21,7 @@ namespace Systems
             this.spriteBatch = spriteBatch;
         }
 
-        protected override void PreUpdate(float deltaTime) => spriteBatch.Begin(SpriteSortMode.BackToFront);
+        protected override void PreUpdate(float deltaTime) => spriteBatch.Begin(SpriteSortMode.BackToFront, null, SamplerState.PointClamp);
 
         protected override void Update(float deltaTime, System.ReadOnlySpan<DefaultEcs.Entity> entities)
         {
@@ -33,7 +33,7 @@ namespace Systems
                 spriteBatch.Draw(
                     sprite_component.texture,
                     transform.body.Position,
-                    null,
+                    sprite_component.source,
                     sprite_component.color,
                     transform.body.Rotation,
                     sprite_component.origin,

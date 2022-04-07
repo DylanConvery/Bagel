@@ -26,7 +26,7 @@ namespace Systems
             velocity.Y = Approach(playerInput.vertical, velocity.Y, deltaTime * playerMovement.speed);
 
             transform.body.ApplyLinearImpulse(velocity);
-            Debug.WriteLine(transform.body.Position);
+            //Debug.WriteLine(transform.body.Position);
         }
 
         float Approach(float flGoal, float flCurrent, float dt)

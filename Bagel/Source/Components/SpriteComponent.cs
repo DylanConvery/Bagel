@@ -13,5 +13,6 @@ namespace Components
         public Color color;
         public Vector2 origin;
         public Vector2 scale;
+        public Rectangle source;
     }
 }

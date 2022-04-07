@@ -11,6 +11,8 @@ using DefaultEcs.Threading;
 using System.Diagnostics;
 using tainicom.Aether.Physics2D.Dynamics;
 using World = DefaultEcs.World;
+using tainicom.Aether.Physics2D.Collision.Shapes;
+using tainicom.Aether.Physics2D.Common;
 
 namespace Bagel
 {
@@ -45,7 +47,7 @@ namespace Bagel
             spriteBatch = new SpriteBatch(GraphicsDevice);
             #endregion 
 
-            playerTexture = Content.Load<Texture2D>("bagel");
+            playerTexture = Content.Load<Texture2D>("Sprite-0001-Sheet");
             buildingTexture = Content.Load<Texture2D>("building");
 
             world = new World();
@@ -71,7 +73,7 @@ namespace Bagel
 
             player.Set(new PlayerMovementComponent
             {
-                speed = 2000000.0f
+                speed = 20000.0f
             });
 
             player.Set(new SpriteComponent
@@ -80,13 +82,21 @@ namespace Bagel
                 layerIndex = 0.0f,
                 color = Color.White,
                 origin = Vector2.Zero,
-                scale = new Vector2(0.15f)
+                scale = new Vector2(3f),
+                source = new Rectangle(0, 0, 32, 32)
             });
+
+            player.Set(new AnimationComponent
+            {
+                frame_count = 8
+            });
+
+            PolygonShape box = new PolygonShape(PolygonTools.CreateRectangle(0.15f, 0.15f), 1f);
 
             player.Set<TransformComponent>();
             ref var player_transform = ref player.Get<TransformComponent>();
             player_transform.body = physics_world.CreateBody(new Vector2(50,400), 0, BodyType.Dynamic);
-            player_transform.body.CreateRectangle(8f, 8f, 0f, Vector2.Zero);
+            player_transform.body.CreateFixture(box);
             player_transform.body.LinearDamping = 80f;
             player_transform.body.AngularDamping = 80f;
 
@@ -103,7 +113,8 @@ namespace Bagel
                 texture = playerTexture,
                 layerIndex = 0.0f,
                 color = Color.White,
-                scale = new Vector2(0.1f)
+                scale = new Vector2(1f),
+                source = new Rectangle(0, 0, 32, 32)
 
             });
 
@@ -121,8 +132,8 @@ namespace Bagel
                 texture = buildingTexture,
                 layerIndex = 1.0f,
                 color = Color.White,
-                scale = new Vector2(1f)
-
+                scale = new Vector2(1f),
+                source = new Rectangle(0,0,buildingTexture.Width,buildingTexture.Height)
             });
 
             building.Set(new TransformComponent
@@ -140,7 +151,8 @@ namespace Bagel
             );
 
             renderSystem = new SequentialSystem<float>(
-                new DrawSystem(spriteBatch, world)
+                new DrawSystem(spriteBatch, world),
+                new AnimationSystem(world)
             );
 
         }
