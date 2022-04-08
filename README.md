@@ -1,6 +1,6 @@
 # Bagel
 
-![Placeholder Bagel](http://pixelartmaker-data-78746291193.nyc3.digitaloceanspaces.com/image/11596cfdff669a3.png)
+![Bagel](Documentation/Images/bagel.gif)
 
 ## About
 
