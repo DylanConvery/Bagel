@@ -22,11 +22,11 @@ namespace Systems
 
             Vector2 velocity = Vector2.Zero;
 
-            velocity.X = Approach(playerInput.horizontal, velocity.X, deltaTime * playerMovement.speed);
-            velocity.Y = Approach(playerInput.vertical, velocity.Y, deltaTime * playerMovement.speed);
+            velocity.X = Approach(playerInput.horizontal, velocity.X, deltaTime);
+            velocity.Y = Approach(playerInput.vertical, velocity.Y, deltaTime);
 
-            transform.body.ApplyLinearImpulse(velocity);
-            //Debug.WriteLine(transform.body.Position);
+            transform.body.ApplyLinearImpulse(velocity * playerMovement.speed);
+            Debug.WriteLine(transform.body.Position);
         }
 
         float Approach(float flGoal, float flCurrent, float dt)

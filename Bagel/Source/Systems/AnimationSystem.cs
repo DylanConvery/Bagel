@@ -33,7 +33,7 @@ namespace Systems
             }
 
 
-            Debug.WriteLine(sprite.source);
+            //Debug.WriteLine(sprite.source);
 
         }
     }

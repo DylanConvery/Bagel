@@ -16,28 +16,25 @@ namespace Systems
 
             if (keyboard.IsKeyDown(Keys.W))
             {
-                component.vertical = -1005f;
+                component.vertical = -1;
             }
             else if (keyboard.IsKeyDown(Keys.S))
             {
-                component.vertical = 1005f;
+                component.vertical = 1;
             }
             else if (keyboard.IsKeyDown(Keys.D))
             {
-                component.horizontal = 1005f;
+                component.horizontal = 1;
             }
             else if (keyboard.IsKeyDown(Keys.A))
             {
-                component.horizontal = -1005f;
+                component.horizontal = -1;
             }
             else
             {
                 component.vertical = 0f;
                 component.horizontal = 0f;
-
             }
-
-
         }
     }
 }
