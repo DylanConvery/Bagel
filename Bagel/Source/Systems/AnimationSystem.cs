@@ -11,16 +11,16 @@ using System.Diagnostics;
 
 namespace Systems
 {
-    [With(typeof(AnimationComponent))]
-    [With(typeof(SpriteComponent))]
+    [With(typeof(Animation))]
+    [With(typeof(Sprite))]
     public class AnimationSystem : AEntitySetSystem<float>
     {
         public AnimationSystem(World world) : base(world) { }
 
         protected override void Update(float deltaTime, in Entity entity)
         {
-            ref var animation = ref entity.Get<AnimationComponent>();
-            ref var sprite = ref entity.Get<SpriteComponent>();
+            ref var animation = ref entity.Get<Animation>();
+            ref var sprite = ref entity.Get<Sprite>();
 
 
             sprite.source.Offset(32f, 0f);

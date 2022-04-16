@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace Components
 {
-    public struct AIComponent
+    public struct Animation
     {
+        public int current_frame;
+        public int frame_count;
     }
 }

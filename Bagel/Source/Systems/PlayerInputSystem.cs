@@ -7,10 +7,10 @@ using System.Diagnostics;
 
 namespace Systems
 {
-    public class PlayerInputSystem : AComponentSystem<float, PlayerInputComponent>
+    public class PlayerInputSystem : AComponentSystem<float, PlayerInput>
     {
         public PlayerInputSystem(World world) : base(world) { }
-        protected override void Update(float deltaTime, ref PlayerInputComponent component)
+        protected override void Update(float deltaTime, ref PlayerInput component)
         {
             KeyboardState keyboard = Keyboard.GetState();
 

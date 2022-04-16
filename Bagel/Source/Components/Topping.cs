@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 
 namespace Components
 {
-    public struct PlayerMovementComponent
+    public struct topping
     {
-        public float speed;
     }
 }

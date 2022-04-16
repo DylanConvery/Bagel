@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Components
 {
-    public struct PlayerInputComponent
+    public struct PlayerInput
     {
         public float horizontal;
         public float vertical;

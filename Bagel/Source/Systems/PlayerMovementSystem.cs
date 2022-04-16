@@ -8,25 +8,25 @@ using System;
 
 namespace Systems
 {
-    [With(typeof(TransformComponent))]
-    [With(typeof(PlayerMovementComponent))]
-    [With(typeof(PlayerInputComponent))]
+    [With(typeof(Physics))]
+    [With(typeof(PlayerMovement))]
+    [With(typeof(PlayerInput))]
     public class PlayerMovementSystem : AEntitySetSystem<float>
     {
         public PlayerMovementSystem(World world) : base(world) { }
         protected override void Update(float deltaTime, in Entity entity)
         {
-            ref var transform = ref entity.Get<TransformComponent>();
-            ref var playerMovement = ref entity.Get<PlayerMovementComponent>();
-            ref var playerInput = ref entity.Get<PlayerInputComponent>();
+            ref var transform = ref entity.Get<Physics>();
+            ref var playerMovement = ref entity.Get<PlayerMovement>();
+            ref var playerInput = ref entity.Get<PlayerInput>();
 
             Vector2 velocity = Vector2.Zero;
 
             velocity.X = Approach(playerInput.horizontal, velocity.X, deltaTime);
-            velocity.Y = Approach(playerInput.vertical, velocity.Y, deltaTime);
+           velocity.Y = Approach(playerInput.vertical, velocity.Y, deltaTime);
 
             transform.body.ApplyLinearImpulse(velocity * playerMovement.speed);
-            Debug.WriteLine(transform.body.Position);
+            //Debug.WriteLine(transform.body.Position);
         }
 
         float Approach(float flGoal, float flCurrent, float dt)

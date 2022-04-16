@@ -11,8 +11,8 @@ using System.Text;
 
 namespace Systems
 {
-    [With(typeof(TransformComponent))]
-    [With(typeof(SpriteComponent))]
+    [With(typeof(Physics))]
+    [With(typeof(Sprite))]
     class DrawSystem : AEntitySetSystem<float>
     {
         private SpriteBatch spriteBatch;
@@ -30,8 +30,8 @@ namespace Systems
         {
             foreach (ref readonly Entity entity in entities)
             {
-                ref var sprite_component = ref entity.Get<SpriteComponent>();
-                ref var transform = ref entity.Get<TransformComponent>();
+                ref var sprite_component = ref entity.Get<Sprite>();
+                ref var transform = ref entity.Get<Physics>();
 
                 spriteBatch.Draw(
                     sprite_component.texture,

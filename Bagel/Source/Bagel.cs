@@ -30,7 +30,6 @@ namespace Bagel
 
         private Entity player;
         private Entity building;
-        private Entity npc;
 
         private DebugView debug;
 
@@ -51,7 +50,6 @@ namespace Bagel
             #region world
             world = new DefaultEcs.World();
 
-
             world.Set(new tainicom.Aether.Physics2D.Dynamics.World());
             ref var physics_world = ref world.Get<tainicom.Aether.Physics2D.Dynamics.World>();
 
@@ -59,7 +57,7 @@ namespace Bagel
             debug.LoadContent(graphicsDevice.GraphicsDevice, Content);
             debug.DefaultShapeColor = Color.White;
             
-            physics_world.Gravity = new Vector2(0, 0);
+            physics_world.Gravity = new Vector2(0, 100);
 
             var top = 0;
             var bottom = GAME_HEIGHT;
@@ -75,15 +73,14 @@ namespace Bagel
             #region player
             player = world.CreateEntity();
 
-            player.Set<PlayerInputComponent>();
+            player.Set<PlayerInput>();
 
-            player.Set(new PlayerMovementComponent
+            player.Set(new PlayerMovement
             {
-                speed = 200000000.0f
+                speed = 10000000000.0f
             });
 
-
-            player.Set(new SpriteComponent
+            player.Set(new Sprite
             {
                 texture = Content.Load<Texture2D>("box"),
                 layerIndex = 0.0f,
@@ -91,51 +88,24 @@ namespace Bagel
                 scale = new Vector2(3),
                 source = new Rectangle(0, 0, 32, 32)
             });
-            ref var player_sprite = ref player.Get<SpriteComponent>();
+            ref var player_sprite = ref player.Get<Sprite>();
             player_sprite.origin = new Vector2(player_sprite.texture.Width/2f, player_sprite.texture.Height/ 2f);
 
-            //player.Set(new AnimationComponent
-            //{
-            //    frame_count = 8
-            //});
-
-            player.Set<TransformComponent>();
-            ref var player_transform = ref player.Get<TransformComponent>();
-            player_transform.body = physics_world.CreateRectangle(32f * player_sprite.scale.X, 38f * player_sprite.scale.Y, 0.1f, new Vector2(40,400), 0f, BodyType.Dynamic);
+            player.Set<Physics>();
+            ref var player_transform = ref player.Get<Physics>();
+            //stupid way of doing this.
+            player_transform.body = physics_world.CreateRectangle(32f * player_sprite.scale.X, 38f * player_sprite.scale.Y, 0.1f, new Vector2(40,540), 0f, BodyType.Dynamic);
             
             player_transform.body.LinearDamping = 8f;
-            player_transform.body.Mass = 0;
             player_transform.body.FixedRotation = true;
             player_transform.body.AngularDamping = 8f;
             player_transform.body.Tag = player;
-
-            #endregion
-
-            #region npc
-            npc = world.CreateEntity();
-
-            npc.Set<AIComponent>();
-
-            npc.Set(new SpriteComponent
-            {
-                texture = player.Get<SpriteComponent>().texture,
-                layerIndex = 0.0f,
-                color = Color.White,
-                scale = new Vector2(1f),
-                source = new Rectangle(0, 0, 32, 32)
-
-            });
-
-            npc.Set<TransformComponent>();
-            ref var npc_transform = ref npc.Get<TransformComponent>();
-            npc_transform.body = world.Get<tainicom.Aether.Physics2D.Dynamics.World>().CreateRectangle(1f, 1f, 1f, new Vector2(100, 200), 0f, BodyType.Dynamic);
-            npc_transform.body.Tag = npc;
             #endregion
 
             #region building
             building = world.CreateEntity();
 
-            building.Set(new SpriteComponent
+            building.Set(new Sprite
             {
                 texture = Content.Load<Texture2D>("building"),
                 layerIndex = 1.0f,
@@ -144,18 +114,19 @@ namespace Bagel
                 source = new Rectangle(0, 0, 800, 445)
             });
 
-            building.Set(new TransformComponent
+            building.Set(new Physics
             {
                 body = world.Get<tainicom.Aether.Physics2D.Dynamics.World>().CreateRectangle(1f, 1f, 1f, Vector2.Zero, 0f, BodyType.Static)
             });
 
-            ref var building_transform = ref building.Get<TransformComponent>();
+            ref var building_transform = ref building.Get<Physics>();
             building_transform.body.Enabled = false;
             #endregion
 
             #region systems
             updateSystem = new SequentialSystem<float>(
                 new WorldPhysicsSystem(world),
+                new GameSystem(world, Content),
                 new PlayerInputSystem(world),
                 new PlayerMovementSystem(world)
             );

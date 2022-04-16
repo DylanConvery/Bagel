@@ -6,7 +6,7 @@ using tainicom.Aether.Physics2D.Dynamics;
 
 namespace Components
 {
-    public struct TransformComponent
+    public struct Physics
     {
         public Body body;
     }

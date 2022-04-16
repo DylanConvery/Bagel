@@ -6,9 +6,13 @@ using System.Threading.Tasks;
 
 namespace Components
 {
-    public struct AnimationComponent
+    public struct PlayerMovement
     {
-        public int current_frame;
-        public int frame_count;
+        public float speed;
+
+        public PlayerMovement(float speed)
+        {
+            this.speed = speed;
+        }
     }
 }
