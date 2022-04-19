@@ -77,7 +77,7 @@ namespace Bagel
 
             player.Set(new PlayerMovement
             {
-                speed = 10000000000.0f
+                speed = 10000000.0f
             });
 
             player.Set(new Sprite
