@@ -4,8 +4,12 @@
 
 ## About
 
-Bagel is a cross-platform video game about about bagel who must take it upon itself to save all the people it can from the raging inferno engulfing its hole apartment block.
+Bagel is a cross-platform video game about about bagel who must catch all the toppings it can leaping for life from the freak fires sparking all throughout the city.
+
+![Gameplay](Documentation/Images/gameplay.png)
 
 ## Technology 
 
 Framework: MonoGame
+ECS: DefaultECS
+Physics: Aether.Physics2D
