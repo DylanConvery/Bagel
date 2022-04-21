@@ -4,7 +4,7 @@
 	<img width="320" height="320" src="Documentation/Images/bagel.gif">
 </p>
 
-Bagel is a 2D cross-platform video game about about bagel who must save all the toppings it can from the freak fires sparking all throughout the city. This project was developed as part of my final year project.
+Bagel is a 2D cross-platform video game about about bagel who must save all the toppings it can from the freak fires sparking all throughout the city. This project was developed as part of my final year project and dissertation.
 
 ## Technology 
 
