@@ -6,7 +6,7 @@
 
 Bagel is a cross-platform video game about about bagel who must catch all the toppings it can leaping for life from the freak fires sparking all throughout the city.
 
-![Gameplay](Documentation/Images/gameplay.png =274x512)
+![Gameplay](Documentation/Images/gameplay.png)
 
 ## Technology 
 
