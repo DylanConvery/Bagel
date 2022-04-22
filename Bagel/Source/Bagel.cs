@@ -12,121 +12,73 @@ using System.Diagnostics;
 using tainicom.Aether.Physics2D.Dynamics;
 using tainicom.Aether.Physics2D.Collision.Shapes;
 using tainicom.Aether.Physics2D.Common;
+using Physics_World = tainicom.Aether.Physics2D.Dynamics.World;
+
+#if DEBUG
 using tainicom.Aether.Physics2D.Diagnostics;
+#endif
 
 namespace Bagel
 {
     public class Bagel : Game
     {
-        private GraphicsDeviceManager graphicsDevice;
+        private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
-        private int GAME_HEIGHT = 600;
-        private int GAME_WIDTH = 800;
+        private static int SCALE = 3;
+        private int WINDOW_HEIGHT = 256 * SCALE;
+        private int WINDOW_WIDTH = 512 * SCALE;
 
         private DefaultEcs.World world;
 
         private ISystem<float> updateSystem;
         private ISystem<float> renderSystem;
 
-        private Entity player;
-        private Entity building;
-
+        #if DEBUG
         private DebugView debug;
+        #endif
 
         public Bagel()
         {
             #region MonoGame
-            graphicsDevice = new GraphicsDeviceManager(this);
-            graphicsDevice.SynchronizeWithVerticalRetrace = false;
-            IsFixedTimeStep = false;
-            graphicsDevice.PreferredBackBufferWidth = GAME_WIDTH;
-            graphicsDevice.PreferredBackBufferHeight = GAME_HEIGHT;
-            graphicsDevice.GraphicsProfile = GraphicsProfile.HiDef;
+            graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-            graphicsDevice.ApplyChanges();
+            IsMouseVisible = true;
+            #endregion
+        }
+
+        protected override void Initialize()
+        {
+            graphics.PreferredBackBufferWidth = WINDOW_WIDTH;
+            graphics.PreferredBackBufferHeight = WINDOW_HEIGHT;
+            graphics.SynchronizeWithVerticalRetrace = false;
+            IsFixedTimeStep = false;
+            graphics.GraphicsProfile = GraphicsProfile.HiDef;
+            graphics.ApplyChanges();
+            base.Initialize();
+        }
+
+        protected override void LoadContent()
+        {
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            #endregion 
 
             #region world
             world = new DefaultEcs.World();
-
-            world.Set(new tainicom.Aether.Physics2D.Dynamics.World());
+            world.Set(new Physics_World(new Vector2(0, 100)));
             ref var physics_world = ref world.Get<tainicom.Aether.Physics2D.Dynamics.World>();
+            #endregion
 
+            #region aether
+            #if DEBUG
             debug = new DebugView(physics_world);
-            debug.LoadContent(graphicsDevice.GraphicsDevice, Content);
+            debug.LoadContent(graphics.GraphicsDevice, Content);
             debug.DefaultShapeColor = Color.White;
-            
-            physics_world.Gravity = new Vector2(0, 100);
-
-            var top = 0;
-            var bottom = GAME_HEIGHT;
-            var left = 0;
-            var right = GAME_WIDTH;
-
-            physics_world.CreateEdge(new Vector2(top, left), new Vector2(right, top));
-            physics_world.CreateEdge(new Vector2(right, top), new Vector2(right, bottom));
-            physics_world.CreateEdge(new Vector2(top, left), new Vector2(left, bottom));
-            physics_world.CreateEdge(new Vector2(left, bottom), new Vector2(right, bottom));
-            #endregion
-
-            #region player
-            player = world.CreateEntity();
-
-            player.Set<PlayerInput>();
-
-            player.Set(new PlayerMovement
-            {
-                speed = 10000000.0f
-            });
-
-            player.Set(new Sprite
-            {
-                texture = Content.Load<Texture2D>("box"),
-                layerIndex = 0.0f,
-                color = Color.White,
-                scale = new Vector2(3),
-                source = new Rectangle(0, 0, 32, 32)
-            });
-            ref var player_sprite = ref player.Get<Sprite>();
-            player_sprite.origin = new Vector2(player_sprite.texture.Width/2f, player_sprite.texture.Height/ 2f);
-
-            player.Set<Physics>();
-            ref var player_transform = ref player.Get<Physics>();
-            //stupid way of doing this.
-            player_transform.body = physics_world.CreateRectangle(32f * player_sprite.scale.X, 38f * player_sprite.scale.Y, 0.1f, new Vector2(40,540), 0f, BodyType.Dynamic);
-            
-            player_transform.body.LinearDamping = 8f;
-            player_transform.body.FixedRotation = true;
-            player_transform.body.AngularDamping = 8f;
-            player_transform.body.Tag = player;
-            #endregion
-
-            #region building
-            building = world.CreateEntity();
-
-            building.Set(new Sprite
-            {
-                texture = Content.Load<Texture2D>("building"),
-                layerIndex = 1.0f,
-                color = Color.White,
-                scale = new Vector2(1f),
-                source = new Rectangle(0, 0, 800, 445)
-            });
-
-            building.Set(new Physics
-            {
-                body = world.Get<tainicom.Aether.Physics2D.Dynamics.World>().CreateRectangle(1f, 1f, 1f, Vector2.Zero, 0f, BodyType.Static)
-            });
-
-            ref var building_transform = ref building.Get<Physics>();
-            building_transform.body.Enabled = false;
+            #endif
             #endregion
 
             #region systems
             updateSystem = new SequentialSystem<float>(
                 new WorldPhysicsSystem(world),
-                new GameSystem(world, Content),
+                new GameSystem(world, Content, graphics.GraphicsDevice),
                 new PlayerInputSystem(world),
                 new PlayerMovementSystem(world)
             );
@@ -136,11 +88,14 @@ namespace Bagel
                 new AnimationSystem(world)
             );
             #endregion
+
+            base.LoadContent();
         }
 
         protected override void Update(GameTime game_time)
         {
             updateSystem.Update((float)game_time.ElapsedGameTime.TotalSeconds);
+            base.Update(game_time);
         }
 
         protected override void Draw(GameTime game_time)
@@ -148,11 +103,13 @@ namespace Bagel
             GraphicsDevice.Clear(Color.Black);
             renderSystem.Update((float)game_time.ElapsedGameTime.TotalSeconds);
 
-            Matrix i = Matrix.CreateOrthographicOffCenter(0, 800, 600, 0, -1, 1);  //what I use on a 1920x1080 screen
+            #if DEBUG
+            Matrix i = Matrix.CreateOrthographicOffCenter(0, WINDOW_WIDTH, WINDOW_HEIGHT, 0, -1, 1);
             Matrix view = Matrix.CreateScale(1);
-
             debug.RenderDebugData(ref i, ref view);
+            #endif
 
+            base.Draw(game_time);
         }
     }
 }

@@ -22,18 +22,23 @@ namespace Systems
             ref var animation = ref entity.Get<Animation>();
             ref var sprite = ref entity.Get<Sprite>();
 
+            sprite.source = animation.rectangle;
+            sprite.origin = new Vector2(animation.rectangle.Width / 2, animation.rectangle.Height / 2);
 
-            sprite.source.Offset(32f, 0f);
-            animation.current_frame++;
-
-            if(animation.current_frame >= animation.frame_count)
+            if (animation.timer >= animation.frame_speed)
             {
-                animation.current_frame = 0;
-                sprite.source.Location = new Point(0,0);
+                animation.rectangle.X += animation.offset;
+                animation.current_frame++;
+                animation.timer = 0;
             }
 
+            if (animation.current_frame >= animation.frame_count)
+            {
+                animation.rectangle.X = 0;
+                animation.current_frame = 0;
+            }
 
-            //Debug.WriteLine(sprite.source);
+            animation.timer += deltaTime;
 
         }
     }
