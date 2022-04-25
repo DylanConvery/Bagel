@@ -18,5 +18,5 @@ Bagel is a 2D cross-platform video game about about bagel who must save all the 
 Use the A and D keys to move the player. The objective of the game is to catch as many falling toppings as possible without fail. Your score is displayed in the top right corner of the screen.
 
 <p align="left">
-	<img width="274" height="512" src="Documentation/Images/gameplay.png">
+	<img width="512" height="256" src="Documentation/Images/gameplay.png">
 </p>
