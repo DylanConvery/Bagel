@@ -16,12 +16,12 @@ namespace Systems
     class DrawSystem : AEntitySetSystem<float>
     {
         private SpriteBatch spriteBatch;
-        private GraphicsDevice graphicsDevice;
+        private World world;
 
-        public DrawSystem(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch, World world) : base(world)
+        public DrawSystem(World world, SpriteBatch spriteBatch) : base(world)
         {
             this.spriteBatch = spriteBatch;
-            this.graphicsDevice = graphicsDevice;
+            this.world = world;
         }
 
         protected override void PreUpdate(float deltaTime) => spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend, SamplerState.PointClamp);
@@ -49,6 +49,8 @@ namespace Systems
 
         public Vector2 ConvertWorldToScreen(Vector2 position)
         {
+            ref var graphicsDevice = ref world.Get<GraphicsDevice>();
+
             Matrix i = Matrix.CreateOrthographicOffCenter(0, graphicsDevice.Viewport.Width, graphicsDevice.Viewport.Height, 0, 0, 0);  //what I use on a 1920x1080 screen
             Matrix view = Matrix.CreateScale(1);
             Vector3 temp = graphicsDevice.Viewport.Project(new Vector3(position, 0), i, view, Matrix.Identity);

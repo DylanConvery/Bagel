@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Components
 {
-    public struct Topping
+    public struct Player
     {
     }
 }

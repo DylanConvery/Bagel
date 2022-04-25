@@ -13,6 +13,8 @@ using tainicom.Aether.Physics2D.Dynamics;
 using tainicom.Aether.Physics2D.Collision.Shapes;
 using tainicom.Aether.Physics2D.Common;
 using Physics_World = tainicom.Aether.Physics2D.Dynamics.World;
+using Microsoft.Xna.Framework.Content;
+using Messages;
 
 #if DEBUG
 using tainicom.Aether.Physics2D.Diagnostics;
@@ -33,9 +35,9 @@ namespace Bagel
         private ISystem<float> updateSystem;
         private ISystem<float> renderSystem;
 
-        #if DEBUG
+#if DEBUG
         private DebugView debug;
-        #endif
+#endif
 
         public Bagel()
         {
@@ -62,34 +64,42 @@ namespace Bagel
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             #region world
-            world = new DefaultEcs.World();
+            world = new DefaultEcs.World(1000);
             world.Set(new Physics_World(new Vector2(0, 100)));
-            ref var physics_world = ref world.Get<tainicom.Aether.Physics2D.Dynamics.World>();
+            world.Set(Content);
+            world.Set(graphics.GraphicsDevice);
+            world.Subscribe<GroundHitMessage>(On);
             #endregion
 
+#if DEBUG
             #region aether
-            #if DEBUG
+            ref var physics_world = ref world.Get<tainicom.Aether.Physics2D.Dynamics.World>();
             debug = new DebugView(physics_world);
             debug.LoadContent(graphics.GraphicsDevice, Content);
             debug.DefaultShapeColor = Color.White;
-            #endif
             #endregion
+#endif
 
             #region systems
             updateSystem = new SequentialSystem<float>(
                 new WorldPhysicsSystem(world),
-                new GameSystem(world, Content, graphics.GraphicsDevice),
+                new GameSystem(world),
                 new PlayerInputSystem(world),
                 new PlayerMovementSystem(world)
             );
 
             renderSystem = new SequentialSystem<float>(
-                new DrawSystem(GraphicsDevice, spriteBatch, world),
+                new DrawSystem(world, spriteBatch),
                 new AnimationSystem(world)
             );
             #endregion
 
             base.LoadContent();
+        }
+
+        private void On(in GroundHitMessage _)
+        {
+            Initialize();
         }
 
         protected override void Update(GameTime game_time)
@@ -103,11 +113,11 @@ namespace Bagel
             GraphicsDevice.Clear(Color.Black);
             renderSystem.Update((float)game_time.ElapsedGameTime.TotalSeconds);
 
-            #if DEBUG
+#if DEBUG
             Matrix i = Matrix.CreateOrthographicOffCenter(0, WINDOW_WIDTH, WINDOW_HEIGHT, 0, -1, 1);
             Matrix view = Matrix.CreateScale(1);
             debug.RenderDebugData(ref i, ref view);
-            #endif
+#endif
 
             base.Draw(game_time);
         }
