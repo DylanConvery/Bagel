@@ -90,12 +90,12 @@ namespace Systems
                 speed = 10000000.0f
             });
 
-            player.Set(new Sprite(content.Load<Texture2D>("Assets/Spritesheets/bagel_idle_animation"), 0.3f));
+            player.Set(new Sprite(content.Load<Texture2D>("Assets/Spritesheets/bagel_idle_animation"), 0.3f, 2));
             player.Set(new Animation
             {
                 frame_count = 4,
                 frame_speed = 0.2f,
-                rectangle = new Rectangle(0, 0, 32, 32),
+                source_rectangle = new Rectangle(0, 0, 32, 32),
                 offset = 32,
                 current_frame = 0
             });
@@ -174,7 +174,7 @@ namespace Systems
                 {
                     frame_count = 4,
                     frame_speed = 0.2f,
-                    rectangle = new Rectangle(0, 0, 8, 8),
+                    source_rectangle = new Rectangle(0, 0, 8, 8),
                     offset = 8,
                     current_frame = 0
                 });

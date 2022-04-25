@@ -14,7 +14,7 @@ namespace Components
         public int current_frame;
         public float frame_speed;
         public int offset;
-        public Rectangle rectangle;
+        public Rectangle source_rectangle;
         public float timer;
 
         public Animation(int frame_count, int current_frame, float frame_speed, int offset, Rectangle source)
@@ -23,7 +23,7 @@ namespace Components
             this.current_frame = current_frame;
             this.frame_speed = frame_speed;
             this.offset = offset;
-            rectangle = source;
+            source_rectangle = source;
             timer = 0;
         }
     }
