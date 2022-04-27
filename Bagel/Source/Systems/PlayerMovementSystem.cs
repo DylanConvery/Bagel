@@ -11,6 +11,7 @@ namespace Systems
     [With(typeof(Physics))]
     [With(typeof(PlayerMovement))]
     [With(typeof(PlayerInput))]
+    [With(typeof(Animation))]
     public class PlayerMovementSystem : AEntitySetSystem<float>
     {
         public PlayerMovementSystem(World world) : base(world) { }
@@ -19,14 +20,28 @@ namespace Systems
             ref var transform = ref entity.Get<Physics>();
             ref var playerMovement = ref entity.Get<PlayerMovement>();
             ref var playerInput = ref entity.Get<PlayerInput>();
+            ref var animation = ref entity.Get<Animation>();
 
             Vector2 velocity = Vector2.Zero;
 
             velocity.X = Approach(playerInput.horizontal, velocity.X, deltaTime);
-           velocity.Y = Approach(playerInput.vertical, velocity.Y, deltaTime);
+            velocity.Y = Approach(playerInput.vertical, velocity.Y, deltaTime);
 
             transform.body.ApplyLinearImpulse(velocity * playerMovement.speed);
-            //Debug.WriteLine(transform.body.Position);
+
+            //TODO: command pattern? right now its slow and inefficient
+            if (playerInput.horizontal > 0)
+            {
+                animation.source_rectangle.Y = animation.offset;
+            }
+            if (playerInput.horizontal < 0)
+            {
+                animation.source_rectangle.Y = animation.offset * 2;
+            }
+            if (playerInput.horizontal == 0)
+            {
+                animation.source_rectangle.Y = 0;
+            }
         }
 
         float Approach(float flGoal, float flCurrent, float dt)

@@ -3,6 +3,7 @@ using DefaultEcs;
 using DefaultEcs.System;
 using DefaultEcs.Threading;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -24,7 +25,7 @@ namespace Systems
             this.world = world;
         }
 
-        protected override void PreUpdate(float deltaTime) => spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend, SamplerState.PointClamp);
+        protected override void PreUpdate(float deltaTime) => spriteBatch.Begin(SpriteSortMode.FrontToBack, blendState:BlendState.AlphaBlend, samplerState: SamplerState.PointClamp);
 
         protected override void Update(float deltaTime, System.ReadOnlySpan<DefaultEcs.Entity> entities)
         {

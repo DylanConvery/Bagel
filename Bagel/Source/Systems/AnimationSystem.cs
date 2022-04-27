@@ -23,6 +23,7 @@ namespace Systems
             ref var sprite = ref entity.Get<Sprite>();
 
             sprite.source = animation.source_rectangle;
+            //TODO: Shouldn't be setting the origin here
             sprite.origin = new Vector2(animation.source_rectangle.Width / 2, animation.source_rectangle.Height / 2);
 
             if (animation.timer >= animation.frame_speed)

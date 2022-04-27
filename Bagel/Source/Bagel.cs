@@ -27,6 +27,7 @@ namespace Bagel
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
         private static int SCALE = 3;
+        //TODO: Fix scaling 
         private int WINDOW_HEIGHT = 256 * SCALE;
         private int WINDOW_WIDTH = 512 * SCALE;
 
@@ -89,8 +90,9 @@ namespace Bagel
             );
 
             renderSystem = new SequentialSystem<float>(
+                new AnimationSystem(world),
                 new DrawSystem(world, spriteBatch),
-                new AnimationSystem(world)
+                new LabelSystem(world, spriteBatch)
             );
             #endregion
 

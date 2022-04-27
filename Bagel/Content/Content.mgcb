@@ -13,6 +13,20 @@
 
 #---------------------------------- Content ---------------------------------#
 
+#begin Assets/Fonts/8-bit Arcade In.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Assets/Fonts/8-bit Arcade In.spritefont
+
+#begin Assets/Fonts/8-bit Arcade Out.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=False
+/processorParam:TextureFormat=Compressed
+/build:Assets/Fonts/8-bit Arcade Out.spritefont
+
 #begin Assets/Sprites/apartment_building.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -288,6 +302,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Assets/Spritesheets/bagel_right_run_animation.png
+
+#begin Assets/Spritesheets/bagel_sprite_atlas.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Assets/Spritesheets/bagel_sprite_atlas.png
 
 #begin Assets/Spritesheets/fire_animation.png
 /importer:TextureImporter
