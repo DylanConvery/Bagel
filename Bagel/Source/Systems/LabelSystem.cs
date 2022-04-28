@@ -37,28 +37,6 @@ namespace Systems
                 component.scale,
                 SpriteEffects.None,
                 0);
-
-            spriteBatch.DrawString(
-                component.font,
-                component.text,
-                component.position,
-                component.color,
-                component.rotation,
-                component.origin,
-                component.scale,
-                SpriteEffects.None,
-                0);
-
-            spriteBatch.DrawString(
-                component.font,
-                component.text,
-                component.position,
-                component.color,
-                component.rotation,
-                component.origin,
-                component.scale,
-                SpriteEffects.None,
-                0);
         }
 
         protected override void PostUpdate(float deltaTime) => spriteBatch.End();
