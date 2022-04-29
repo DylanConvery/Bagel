@@ -21,6 +21,9 @@ namespace Systems
     public class GameSystem : ISystem<float>
     {
         private DefaultEcs.World world;
+        private ContentManager content;
+        private GraphicsDevice graphicsDevice;
+        private Physics_World physicsWorld;
 
         private int score;
         private float spawn_timer = 3;
@@ -33,8 +36,11 @@ namespace Systems
         private Entity scoreboard_upper;
 
         private Queue<Entity> fires = new Queue<Entity>();
+        Texture2D[] topping_textures = new Texture2D[2];
+        private Texture2D buildings_texture;
+        private Texture2D fire_texture;
 
-        private List<Body> bodies_to_disable = new List<Body>();
+        private List<Entity> entities_to_remove = new List<Entity>();
 
         //TODO: put in text file and load in
         private Vector2[] spawn_positions = new Vector2[] {
@@ -155,12 +161,17 @@ namespace Systems
         {
             this.world = world;
             this.world.Subscribe<CatchToppingMessage>(On);
-            initialize();
-        }
 
-        public void initialize()
-        {
+            content = world.Get<ContentManager>();
+            graphicsDevice = world.Get<GraphicsDevice>();
+            physicsWorld = world.Get<Physics_World>();
+
             random_position = spawn_positions[random.Next(0, spawn_positions.Length)];
+            topping_textures[0] = content.Load<Texture2D>("Assets/Sprites/bacon");
+            topping_textures[1] = content.Load<Texture2D>("Assets/Sprites/fried_egg");
+            buildings_texture = content.Load<Texture2D>("Assets/Sprites/buildings");
+            fire_texture = content.Load<Texture2D>("Assets/Spritesheets/fire_animation");
+
             LoadLevel();
         }
 
@@ -168,36 +179,38 @@ namespace Systems
         {
             if ((spawn_timer -= deltaTime) < 0f)
             {
-                spawn_timer = random.Next(1,3);
-                if (!spawn_switch) {
+                if (!spawn_switch)
+                {
                     CreateTopping(random_position);
                     random_position = spawn_positions[random.Next(0, spawn_positions.Length)];
                 }
                 else
                 {
                     fires.Enqueue(CreateFire(random_position));
+                    if (fires.Count > 8)
+                    {
+                        entities_to_remove.Add(fires.Dequeue());
+                    }
                 }
+
+                spawn_timer = random.Next(1, 3);
                 spawn_switch = !spawn_switch;
             }
 
-            if (fires.Count > 10)
+            foreach (var entity in entities_to_remove)
             {
-                fires.Dequeue().Dispose();
-            }
-            //TODO: bad and inefficient 
-            foreach (var body in bodies_to_disable)
-            {
-                body.Enabled = false;
+                entity.Get<Physics>().body.Enabled = false;
+                entity.Disable();
             }
 
-            if (bodies_to_disable.Count > 3)
+            if (entities_to_remove.Count > 20)
             {
-                ref var physics_world = ref world.Get<Physics_World>();
-                foreach (var body in bodies_to_disable)
+                foreach (var entity in entities_to_remove)
                 {
-                    physics_world.Remove(body);
+                    physicsWorld.Remove(entity.Get<Physics>().body);
+                    entity.Dispose();
                 }
-                bodies_to_disable.Clear();
+                entities_to_remove.Clear();
             }
         }
 
@@ -223,9 +236,6 @@ namespace Systems
         //TODO: Not great having to draw two Labels for the one thing
         public void CreateScoreboard()
         {
-            ref var content = ref world.Get<ContentManager>();
-            ref var graphicsDevice = ref world.Get<GraphicsDevice>();
-
             scoreboard_lower = world.CreateEntity();
             scoreboard_lower.Set(
                 new Label(
@@ -262,16 +272,13 @@ namespace Systems
         //TODO: shouldn't be here, move to new class
         public void CreatePlayer()
         {
-            ref var content = ref world.Get<ContentManager>();
-            ref var graphicsDevice = ref world.Get<GraphicsDevice>();
-
             #region player
             Entity player = world.CreateEntity();
             player.Set<Player>();
-            player.Set<PlayerInput>();
-            player.Set(new PlayerMovement
+            player.Set<PlayerDirection>();
+            player.Set(new PlayerSpeed
             {
-                speed = 6000000.0f
+                speed = 1400.0f
             });
 
             player.Set(new Sprite(content.Load<Texture2D>("Assets/Spritesheets/bagel_sprite_atlas"), 0.3f, 2));
@@ -287,7 +294,7 @@ namespace Systems
 
             ref var player_physics = ref player.Get<Physics>();
             ref var player_sprite = ref player.Get<Sprite>();
-            player_physics.body = world.Get<Physics_World>().CreateRectangle(
+            player_physics.body = physicsWorld.CreateRectangle(
                 32f,
                 38f,
                 1f,
@@ -306,18 +313,15 @@ namespace Systems
         private bool PlayerCollisionHandler(Fixture sender, Fixture other, Contact contact)
         {
             if (sender.Body.Tag == null && other.Body.Tag == null) return true;
-
             if (other.Body.Tag != null && ((Entity)other.Body.Tag).Has<Topping>())
             {
-                if (!bodies_to_disable.Contains(other.Body))
+                if (!entities_to_remove.Contains((Entity)other.Body.Tag))
                 {
                     world.Publish<CatchToppingMessage>(default);
-                    bodies_to_disable.Add(other.Body);
-                    ((Entity)other.Body.Tag).Dispose();
+                    entities_to_remove.Add((Entity)other.Body.Tag);
                 }
                 return false;
             }
-
             return true;
         }
 
@@ -325,30 +329,21 @@ namespace Systems
         private bool ToppingCollisionHandler(Fixture sender, Fixture other, Contact contact)
         {
             if (sender.Body.Tag == null && other.Body.Tag == null) return true;
-
             if (other.Body.Tag != null && ((Entity)other.Body.Tag).Has<Ground>())
             {
-                if (!bodies_to_disable.Contains(other.Body))
+                if (!entities_to_remove.Contains((Entity)other.Body.Tag))
                 {
                     world.Publish<GroundHitMessage>(default);
-                    bodies_to_disable.Add(sender.Body);
-                    ((Entity)sender.Body.Tag).Dispose();
+                    entities_to_remove.Add((Entity)sender.Body.Tag);
                 }
                 return false;
             }
-
             return true;
         }
 
         //TODO: shouldn't be here, move to new class
         public void CreateTopping(Vector2 position)
         {
-            ref var content = ref world.Get<ContentManager>();
-
-            Texture2D[] topping_textures = new Texture2D[2];
-            topping_textures[0] = content.Load<Texture2D>("Assets/Sprites/bacon");
-            topping_textures[1] = content.Load<Texture2D>("Assets/Sprites/fried_egg");
-
             Entity topping = world.CreateEntity();
             topping.Set<Topping>();
             topping.Set(new Sprite(topping_textures[random.Next(topping_textures.Length)], 0.3f));
@@ -358,7 +353,7 @@ namespace Systems
             ref var topping_body = ref topping.Get<Physics>().body;
             position = new Vector2(position.X + 11, position.Y - 11);
 
-            topping_body = world.Get<Physics_World>().CreateRectangle(
+            topping_body = physicsWorld.CreateRectangle(
                 32f * topping_sprite.scale.X,
                 38f * topping_sprite.scale.Y,
                 0.1f,
@@ -377,10 +372,7 @@ namespace Systems
         //TODO: shouldn't be here, move to new class
         public Entity CreateFire(Vector2 position)
         {
-            ref var content = ref world.Get<ContentManager>();
-
             Entity fire = world.CreateEntity();
-            //better way would be to share the same texture rather than load it for each fire
             fire.Set(new Animation
             {
                 frame_count = 4,
@@ -389,10 +381,10 @@ namespace Systems
                 offset = 8,
                 current_frame = 0
             });
-            fire.Set(new Sprite(content.Load<Texture2D>("Assets/Spritesheets/fire_animation"), 0.2f, 3));
+            fire.Set(new Sprite(fire_texture, 0.2f, 3));
             fire.Set<Physics>();
             ref var fire_physics = ref fire.Get<Physics>();
-            fire_physics.body = world.Get<Physics_World>().CreateBody();
+            fire_physics.body = physicsWorld.CreateBody();
             //TODO:bad, setting offset because of origin
             position = new Vector2(position.X + 11, position.Y - 11);
             fire_physics.body.Position = position;
@@ -401,61 +393,83 @@ namespace Systems
             return fire;
         }
 
-        //TODO: shouldn't be here, move to new class
+        //TODO: shouldn't be here, move to new class nor should it be this long
         public void CreateCity()
         {
-            ref var physics_world = ref world.Get<Physics_World>();
-            ref var content = ref world.Get<ContentManager>();
-            ref var graphicsDevice = ref world.Get<GraphicsDevice>();
-
             #region city
-            Entity ground = world.CreateEntity();
-            ground.Set<Physics>();
-            ground.Set<Ground>();
-
             #region background
             Entity background = world.CreateEntity();
             background.Set(new Sprite(content.Load<Texture2D>("Assets/Sprites/sky"), 0, Color.White, 3));
             background.Set<Physics>();
+
+            Entity background_building_right = world.CreateEntity();
+            background_building_right.Set(new Sprite(buildings_texture, 0f, new Color(100, 100, 100), 3));
+            background_building_right.Set<Physics>();
+
+            ref var background_physics = ref background.Get<Physics>();
+            background_physics.body = physicsWorld.CreateBody();
+            background_physics.body.Position = new Vector2(graphicsDevice.Viewport.Width / 2, graphicsDevice.Viewport.Height / 2);
+            background_physics.body.Enabled = false;
+
+            ref var background_building_right_phyiscs = ref background_building_right.Get<Physics>();
+            background_building_right_phyiscs.body = physicsWorld.CreateBody();
+            background_building_right_phyiscs.body.Position = new Vector2(graphicsDevice.Viewport.Width / 2 + 200, graphicsDevice.Viewport.Height / 2 + 50);
+            background_building_right_phyiscs.body.Enabled = false;
             #endregion
 
             #region middle_ground
-            Entity middle_ground = world.CreateEntity();
-            middle_ground.Set(new Sprite(content.Load<Texture2D>("Assets/Sprites/buildings"), 0.1f, new Color(180, 180, 180), 3));
-            middle_ground.Set<Physics>();
+            Entity middle_ground_building_left = world.CreateEntity();
+            middle_ground_building_left.Set(new Sprite(buildings_texture, 0.1f, new Color(180, 180, 180), 3));
+            middle_ground_building_left.Set<Physics>();
+
+            Entity middle_ground_building_middle = world.CreateEntity();
+            middle_ground_building_middle.Set(new Sprite(buildings_texture, 0.1f, new Color(180, 180, 180), 3));
+            middle_ground_building_middle.Set<Physics>();
+
+            Entity middle_ground_building_right = world.CreateEntity();
+            middle_ground_building_right.Set(new Sprite(buildings_texture, 0.1f, new Color(180, 180, 180), 3));
+            middle_ground_building_right.Set<Physics>();
+
+            ref var middle_ground_building_left_phyiscs = ref middle_ground_building_left.Get<Physics>();
+            middle_ground_building_left_phyiscs.body = physicsWorld.CreateBody();
+            middle_ground_building_left_phyiscs.body.Position = new Vector2(graphicsDevice.Viewport.Width / 5, graphicsDevice.Viewport.Height / 2);
+            middle_ground_building_left_phyiscs.body.Enabled = false;
+
+            ref var middle_ground_building_middle_phyiscs = ref middle_ground_building_middle.Get<Physics>();
+            middle_ground_building_middle_phyiscs.body = physicsWorld.CreateBody();
+            middle_ground_building_middle_phyiscs.body.Position = new Vector2(graphicsDevice.Viewport.Width / 2, graphicsDevice.Viewport.Height / 2);
+            middle_ground_building_middle_phyiscs.body.Enabled = false;
+
+            ref var middle_ground_building_right_physics = ref middle_ground_building_right.Get<Physics>();
+            middle_ground_building_right_physics.body = physicsWorld.CreateBody();
+            middle_ground_building_right_physics.body.Position = new Vector2(graphicsDevice.Viewport.Width, graphicsDevice.Viewport.Height / 2);
+            middle_ground_building_right_physics.body.Enabled = false;
             #endregion
 
             #region foreground
             Entity foreground = world.CreateEntity();
             foreground.Set(new Sprite(content.Load<Texture2D>("Assets/Sprites/foreground"), 0.2f, Color.White, 3));
             foreground.Set<Physics>();
-            #endregion
 
-            //defines world edges
-            physics_world.CreateEdge(new Vector2(0, 0), new Vector2(graphicsDevice.Viewport.Width, 0));
-            physics_world.CreateEdge(new Vector2(graphicsDevice.Viewport.Width, 0), new Vector2(graphicsDevice.Viewport.Width, graphicsDevice.Viewport.Height));
-            physics_world.CreateEdge(new Vector2(0, 0), new Vector2(0, graphicsDevice.Viewport.Height));
-            physics_world.CreateEdge(new Vector2(0, graphicsDevice.Viewport.Height), new Vector2(graphicsDevice.Viewport.Width, graphicsDevice.Viewport.Height));
-
-            ref var ground_physics = ref ground.Get<Physics>();
-            ground_physics.body = physics_world.CreateRectangle(graphicsDevice.Viewport.Width, 20, 1f, new Vector2(graphicsDevice.Viewport.Width / 2, graphicsDevice.Viewport.Height - 20));
-            ground_physics.body.Tag = ground;
+            Entity ground = world.CreateEntity();
+            ground.Set<Physics>();
+            ground.Set<Ground>();
 
             ref var foreground_physics = ref foreground.Get<Physics>();
-            foreground_physics.body = physics_world.CreateBody();
+            foreground_physics.body = physicsWorld.CreateBody();
             foreground_physics.body.Position = new Vector2(graphicsDevice.Viewport.Width / 2, graphicsDevice.Viewport.Height / 2);
             foreground_physics.body.Enabled = false;
 
-            ref var middle_ground_physics = ref middle_ground.Get<Physics>();
-            middle_ground_physics.body = physics_world.CreateBody();
-            middle_ground_physics.body.Position = new Vector2(graphicsDevice.Viewport.Width / 2, graphicsDevice.Viewport.Height / 2);
-            middle_ground_physics.body.Enabled = false;
+            ref var ground_physics = ref ground.Get<Physics>();
+            ground_physics.body = physicsWorld.CreateRectangle(graphicsDevice.Viewport.Width, 20, 1f, new Vector2(graphicsDevice.Viewport.Width / 2, graphicsDevice.Viewport.Height - 20));
+            ground_physics.body.Tag = ground;
 
-            ref var background_physics = ref background.Get<Physics>();
-            background_physics.body = physics_world.CreateBody();
-            background_physics.body.Position = new Vector2(graphicsDevice.Viewport.Width / 2, graphicsDevice.Viewport.Height / 2);
-            background_physics.body.Enabled = false;
-
+            //defines world edges
+            physicsWorld.CreateEdge(new Vector2(0, 0), new Vector2(graphicsDevice.Viewport.Width, 0));
+            physicsWorld.CreateEdge(new Vector2(graphicsDevice.Viewport.Width, 0), new Vector2(graphicsDevice.Viewport.Width, graphicsDevice.Viewport.Height));
+            physicsWorld.CreateEdge(new Vector2(0, 0), new Vector2(0, graphicsDevice.Viewport.Height));
+            physicsWorld.CreateEdge(new Vector2(0, graphicsDevice.Viewport.Height), new Vector2(graphicsDevice.Viewport.Width, graphicsDevice.Viewport.Height));
+            #endregion
             #endregion
         }
     }

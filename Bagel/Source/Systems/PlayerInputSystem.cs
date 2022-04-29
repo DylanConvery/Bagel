@@ -7,33 +7,21 @@ using System.Diagnostics;
 
 namespace Systems
 {
-    public class PlayerInputSystem : AComponentSystem<float, PlayerInput>
+    public class PlayerInputSystem : AComponentSystem<float, PlayerDirection>
     {
         public PlayerInputSystem(World world) : base(world) { }
-        protected override void Update(float deltaTime, ref PlayerInput component)
+        protected override void Update(float deltaTime, ref PlayerDirection component)
         {
             KeyboardState keyboard = Keyboard.GetState();
+            component.direction = Vector2.Zero;
 
-            if (keyboard.IsKeyDown(Keys.W))
+            if (keyboard.IsKeyDown(Keys.D))
             {
-                component.vertical = -1;
-            }
-            else if (keyboard.IsKeyDown(Keys.S))
-            {
-                component.vertical = 1;
-            }
-            else if (keyboard.IsKeyDown(Keys.D))
-            {
-                component.horizontal = 1;
+                component.direction.X = 1;
             }
             else if (keyboard.IsKeyDown(Keys.A))
             {
-                component.horizontal = -1;
-            }
-            else
-            {
-                component.vertical = 0f;
-                component.horizontal = 0f;
+                component.direction.X = -1;
             }
         }
     }

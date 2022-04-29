@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 
 namespace Components
 {
-    public struct PlayerInput
+    public struct PlayerDirection
     {
-        public float horizontal;
-        public float vertical;
+        public Vector2 direction;
     }
 }

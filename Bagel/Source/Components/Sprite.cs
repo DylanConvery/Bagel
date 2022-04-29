@@ -6,6 +6,7 @@ using System.Text;
 
 namespace Components
 {
+    //TODO: Make origin top left rather than middle being dependent on the body position
     public struct Sprite
     {
         public Texture2D texture;

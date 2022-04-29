@@ -33,7 +33,7 @@ namespace Systems
             {
                 ref var sprite_component = ref entity.Get<Sprite>();
                 ref var transform = ref entity.Get<Physics>();
-
+                //TODO: Make this not dependant on the physics body
                 spriteBatch.Draw(
                     sprite_component.texture,
                     ConvertWorldToScreen(transform.body.Position),

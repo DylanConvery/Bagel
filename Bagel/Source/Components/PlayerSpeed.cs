@@ -6,13 +6,8 @@ using System.Threading.Tasks;
 
 namespace Components
 {
-    public struct PlayerMovement
+    public struct PlayerSpeed
     {
         public float speed;
-
-        public PlayerMovement(float speed)
-        {
-            this.speed = speed;
-        }
     }
 }
